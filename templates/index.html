@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineMatch — AI Movie Recommendations</title>
+    <meta name="description"
+        content="Discover your next favorite movie with AI-powered content-based recommendations from 5000+ films.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <!-- ── Animated Background ────────────────────────────────── -->
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- ── Header / Nav ───────────────────────────────────────── -->
+    <header class="navbar">
+        <div class="nav-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon">🎬</span>
+                <span class="logo-text">Cine<span class="accent">Match</span></span>
+            </a>
+            <p class="nav-tagline">AI-Powered Movie Discovery</p>
+        </div>
+    </header>
+
+    <!-- ── Hero Section ───────────────────────────────────────── -->
+    <main>
+        <section class="hero">
+            <h1 class="hero-title">
+                Find Movies You'll <span class="gradient-text">Love</span>
+            </h1>
+            <p class="hero-subtitle">
+                Search a movie for similar recommendations, or just pick a genre and hit Discover to browse 5,000+
+                titles.
+            </p>
+
+            <!-- ── Search Box ─────────────────────────────────── -->
+            <div class="search-container">
+                <div class="search-box" id="searchBox">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="M21 21l-4.35-4.35" />
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search a movie… or leave empty to browse"
+                        autocomplete="off">
+                    <button class="search-btn" id="searchBtn" onclick="getRecommendations()">
+                        <span>Discover</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"
+                            height="18">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
+            </div>
+        </section>
+
+        <!-- ── Filters ────────────────────────────────────────── -->
+        <section class="filters-section" id="filtersSection">
+            <div class="filters-header" onclick="toggleFilters()">
+                <h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                    </svg>
+                    Refine Results
+                </h3>
+                <span class="filters-toggle" id="filtersToggle">▼</span>
+            </div>
+            <div class="filters-body show" id="filtersBody">
+                <div class="filter-group">
+                    <label for="genreFilter">Genre</label>
+                    <select id="genreFilter">
+                        <option value="">All Genres</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="ratingFilter">
+                        Min Rating: <span id="ratingValue" class="filter-value">0</span>
+                    </label>
+                    <input type="range" id="ratingFilter" min="0" max="10" step="0.5" value="0">
+                    <div class="range-labels"><span>0</span><span>5</span><span>10</span></div>
+                </div>
+                <div class="filter-group">
+                    <label for="runtimeFilter">
+                        Max Runtime: <span id="runtimeValue" class="filter-value">250 min</span>
+                    </label>
+                    <input type="range" id="runtimeFilter" min="0" max="250" step="10" value="250">
+                    <div class="range-labels"><span>0</span><span>125</span><span>250</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Loading State ──────────────────────────────────── -->
+        <div class="loading-container" id="loadingContainer" style="display:none;">
+            <div class="loader">
+                <div class="loader-ring"></div>
+                <div class="loader-ring"></div>
+                <div class="loader-ring"></div>
+            </div>
+            <p class="loading-text">Analyzing movie DNA…</p>
+        </div>
+
+        <!-- ── Results ────────────────────────────────────────── -->
+        <section class="results-section" id="resultsSection" style="display:none;">
+            <div class="results-header">
+                <h2>Movies similar to <span class="results-title" id="resultTitle"></span></h2>
+                <p class="results-count" id="resultCount"></p>
+            </div>
+            <div class="results-grid" id="resultsGrid"></div>
+        </section>
+
+        <!-- ── Error State ────────────────────────────────────── -->
+        <div class="error-container" id="errorContainer" style="display:none;">
+            <div class="error-card">
+                <span class="error-icon">🎭</span>
+                <p class="error-message" id="errorMessage"></p>
+                <button class="error-retry" onclick="document.getElementById('searchInput').focus()">Try Again</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ── Footer ─────────────────────────────────────────────── -->
+    <footer class="footer">
+        <p>Built with 🧠 Content-Based Filtering · TMDB 5000 Dataset · Flask + Scikit-Learn</p>
+    </footer>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>

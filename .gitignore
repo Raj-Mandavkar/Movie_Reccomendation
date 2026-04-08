@@ -1,0 +1,21 @@
+# Python large files
+*.pkl
+*.csv
+!indian_movies.csv
+!tmdb_5000_movies.csv
+!tmdb_5000_credits.csv
+
+# Python byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE files
+.vscode/
+.idea/
