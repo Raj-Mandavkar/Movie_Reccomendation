@@ -1,0 +1,20 @@
+# Exclude data files used only for building the model
+*.csv
+model_builder.py
+optimize_similarity.py
+create_indian_movies.py
+DataSets/
+
+# Exclude local project files
+.git/
+.gitignore
+.vscode/
+README.md
+requirements.txt.bak
+push_error.txt
+vercel_error_explanation.md
+
+# Exclude python cache
+__pycache__/
+*.py[cod]
+*$py.class
