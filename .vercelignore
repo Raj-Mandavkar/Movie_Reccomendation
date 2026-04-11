@@ -2,8 +2,13 @@
 *.csv
 model_builder.py
 optimize_similarity.py
+compress_models.py
 create_indian_movies.py
 DataSets/
+
+# Exclude uncompressed pickle files (we deploy .pkl.gz only)
+movies.pkl
+similarity.pkl
 
 # Exclude local project files
 .git/

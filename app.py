@@ -3,32 +3,53 @@ app.py — Flask backend for the Movie Recommendation System
 Serves the main page and provides API endpoints for recommendations.
 """
 
+import os
 import pickle
+import gzip
 import numpy as np
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-# ── Load pre-computed models ─────────────────────────────────────────
-print("🔄 Loading model data...")
-movies = pickle.load(open("movies.pkl", "rb"))
-similarity = pickle.load(open("similarity.pkl", "rb"))
-print(f"✅ Loaded {len(movies)} movies")
+# ── Lazy-loaded models (loaded on first request, not at import time) ──
+_movies = None
+_similarity = None
+_all_genres = None
 
 
-def get_all_genres():
-    """Extract all unique genres from the dataset."""
+def _load_models():
+    """Load pre-computed models from gzip-compressed pickle files."""
+    global _movies, _similarity, _all_genres
+
+    if _movies is not None:
+        return
+
+    print("🔄 Loading model data...")
+
+    # Try compressed files first, fall back to uncompressed
+    if os.path.exists("movies.pkl.gz"):
+        with gzip.open("movies.pkl.gz", "rb") as f:
+            _movies = pickle.load(f)
+    else:
+        _movies = pickle.load(open("movies.pkl", "rb"))
+
+    if os.path.exists("similarity.pkl.gz"):
+        with gzip.open("similarity.pkl.gz", "rb") as f:
+            _similarity = pickle.load(f)
+    else:
+        _similarity = pickle.load(open("similarity.pkl", "rb"))
+
+    print(f"✅ Loaded {len(_movies)} movies")
+
+    # Precompute genre list
     genres_set = set()
-    for g_str in movies["genres_str"]:
+    for g_str in _movies["genres_str"]:
         if g_str:
             for g in g_str.split(", "):
                 g = g.strip()
                 if g:
                     genres_set.add(g)
-    return sorted(genres_set)
-
-
-ALL_GENRES = get_all_genres()
+    _all_genres = sorted(genres_set)
 
 
 def recommend(title, genre_filter=None, min_rating=0, max_runtime=999):
@@ -36,15 +57,17 @@ def recommend(title, genre_filter=None, min_rating=0, max_runtime=999):
     Find similar movies and apply hard filters.
     Returns a list of dicts with movie metadata.
     """
+    _load_models()
+
     # Find the movie index
-    matches = movies[movies["title"].str.lower() == title.lower()]
+    matches = _movies[_movies["title"].str.lower() == title.lower()]
     if matches.empty:
         return []
 
     idx = matches.index[0]
 
     # Get similarity scores
-    distances = list(enumerate(similarity[idx]))
+    distances = list(enumerate(_similarity[idx]))
     distances = sorted(distances, key=lambda x: x[1], reverse=True)
 
     results = []
@@ -52,7 +75,7 @@ def recommend(title, genre_filter=None, min_rating=0, max_runtime=999):
         if len(results) >= 10:
             break
 
-        movie = movies.iloc[i]
+        movie = _movies.iloc[i]
 
         # Hard filters
         if movie["vote_average"] < min_rating:
@@ -83,7 +106,9 @@ def browse_movies(genre_filter=None, min_rating=0, max_runtime=999):
     Browse movies by filters without requiring a title.
     Returns top movies sorted by popularity matching the filters.
     """
-    filtered = movies.copy()
+    _load_models()
+
+    filtered = _movies.copy()
 
     if genre_filter:
         filtered = filtered[filtered["genres_str"].str.lower().str.contains(genre_filter.lower(), na=False)]
@@ -124,7 +149,8 @@ def index():
 @app.route("/api/movies")
 def api_movies():
     """Return all movie titles for autocomplete."""
-    movie_list = movies[["title", "genres_str", "vote_average", "runtime"]].to_dict(
+    _load_models()
+    movie_list = _movies[["title", "genres_str", "vote_average", "runtime"]].to_dict(
         orient="records"
     )
     return jsonify(movie_list)
@@ -133,7 +159,8 @@ def api_movies():
 @app.route("/api/genres")
 def api_genres():
     """Return unique genre list."""
-    return jsonify(ALL_GENRES)
+    _load_models()
+    return jsonify(_all_genres)
 
 
 @app.route("/api/recommend", methods=["POST"])

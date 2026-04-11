@@ -1,7 +1,5 @@
-# Python large files
+# Python large files - ignore uncompressed, track compressed
 *.pkl
-!movies.pkl
-!similarity.pkl
 *.csv
 !indian_movies.csv
 !international_movies.csv
