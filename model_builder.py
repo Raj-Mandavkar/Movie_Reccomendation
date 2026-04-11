@@ -134,7 +134,7 @@ def build_model():
     vectors = cv.fit_transform(movies["tags"])
 
     print("📐 Computing cosine similarity...")
-    sim_matrix = cosine_similarity(vectors)
+    sim_matrix = cosine_similarity(vectors).astype(np.float16)
 
     # Prepare final DataFrame for serialization
     movies_out = movies[
