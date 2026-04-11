@@ -73,13 +73,26 @@ def build_model():
         print("🇮🇳 Loading Indian movies dataset...")
         indian = pd.read_csv("indian_movies.csv")
         # Rename columns to match TMDB merged format
-        indian = indian[
+        indian_subset = indian[
             ["id", "title", "overview", "genres", "keywords",
              "cast", "crew", "vote_average", "runtime",
              "release_date", "popularity"]
         ].copy()
-        movies = pd.concat([movies, indian], ignore_index=True)
-        print(f"   Added {len(indian)} Indian movies")
+        movies = pd.concat([movies, indian_subset], ignore_index=True)
+        print(f"   Added {len(indian_subset)} Indian movies")
+
+    # ── Load and append International movies ─────────────────────
+    if os.path.exists("international_movies.csv"):
+        print("🌍 Loading International movies dataset...")
+        intl = pd.read_csv("international_movies.csv")
+        # Select columns to match TMDB merged format
+        intl_subset = intl[
+            ["id", "title", "overview", "genres", "keywords",
+             "cast", "crew", "vote_average", "runtime",
+             "release_date", "popularity"]
+        ].copy()
+        movies = pd.concat([movies, intl_subset], ignore_index=True)
+        print(f"   Added {len(intl_subset)} International movies")
 
     # Drop rows missing overview
     movies.dropna(subset=["overview"], inplace=True)
