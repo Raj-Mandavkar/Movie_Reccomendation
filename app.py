@@ -19,16 +19,10 @@ from google.genai import types
 app = Flask(__name__)
 
 # ── API Credentials ──────────────────────────────────────────────────
-TMDB_API_KEY = "a511f69f92385dec34fdff2b1f73d56b"
+TMDB_API_KEY = os.getenv("TMDB_API_KEY", "")
 TMDB_BASE_URL = "https://api.themoviedb.org/3"
-GEMINI_API_KEYS = [
-    "AIzaSyDBbpQhB3xLQkW4CpWbGrCvA5t5rZokv24",  # Primary (backup key)
-    "AIzaSyCHt1IpwsxCl7gFGIY52wAqFlHKV6G3OjI",  # Key 1
-    "AIzaSyABgHzkkCxLtJl7b7KtJ3i4OHdJooqXNVY",  # Key 2
-    "AIzaSyC-YrcNlUCtYRk7MNCiFJNlZ_yqkO0INGI",  # Key 3
-    "AIzaSyBfPphovr8jWTBUdSzZ5RkpPrEd82ZbZ08", # Key 4
-]
-GEMINI_API_KEY = GEMINI_API_KEYS[0]  # Default to first key
+GEMINI_API_KEYS = [k.strip() for k in os.getenv("GEMINI_API_KEYS", "").split(",") if k.strip()]
+GEMINI_API_KEY = GEMINI_API_KEYS[0] if GEMINI_API_KEYS else ""
 
 # Initialize Gemini client (new SDK) with 40s timeout
 def _create_genai_client(api_key):
