@@ -1,5 +1,6 @@
 # Python large files - ignore uncompressed, track compressed
 *.pkl
+*.pkl.gz
 *.csv
 !indian_movies.csv
 !international_movies.csv
@@ -20,3 +21,9 @@ env/
 # IDE files
 .vscode/
 .idea/
+
+# Test files - development only
+test_*.py
+
+# Documentation - development only
+*.md
