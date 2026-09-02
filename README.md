@@ -1,4 +1,4 @@
-# 🎬 CineMatch — AI Movie Recommender
+# 🎬 WebFlix — AI Movie Recommender
 
 A premium, content-based movie recommendation system built with **Python, Flask, and Scikit-Learn**. Discover similar movies from a dataset of 5,000+ global and Indian titles using AI-powered similarity analysis.
 
