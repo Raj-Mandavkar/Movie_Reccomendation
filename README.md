@@ -34,7 +34,7 @@ python model_builder.py
 ```bash
 python app.py
 ```
-Open `http://127.0.0.1:5000` in your browser.
+Open `http://127.0.0.1:5000` in your browser. --for local deployment
 
 ---
 
